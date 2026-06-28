@@ -5,7 +5,7 @@ export const ROUND_INFO: Record<
   { name: string; rule: string; description: string; icon: string }
 > = {
   1: {
-    name: 'Describe It',
+    name: 'Any Words',
     rule: 'Say anything except the card name',
     description:
       'Use words, sentences, or phrases to describe the card — but never say the actual name!',
