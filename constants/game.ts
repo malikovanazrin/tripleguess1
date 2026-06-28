@@ -22,7 +22,7 @@ export const ROUND_INFO: Record<
     name: 'Charades',
     rule: 'No words — act it out!',
     description:
-      'Silence! No words, no sounds. Use only gestures and body language to get your team to guess.',
+      'Silence! No words. Use gestures, body language, and sound effects (within reason), but no talking.',
     icon: '🤸',
   },
 };
