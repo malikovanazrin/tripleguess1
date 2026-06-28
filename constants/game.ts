@@ -8,14 +8,14 @@ export const ROUND_INFO: Record<
     name: 'Any Words',
     rule: 'Say anything except the card name',
     description:
-      'Use words, sentences, or phrases to describe the card — but never say the actual name!',
+      'Use words, sentences, or phrases to describe the card, but never say the actual name!',
     icon: '💬',
   },
-  2: {
+  2: {s
     name: 'One Word',
     rule: 'One word only as your clue',
     description:
-      'You can only say a single word as your clue. Choose wisely — your team should remember these cards!',
+      'You can only say a single word as your clue. Choose wisely, your team should remember these cards!',
     icon: '1️⃣',
   },
   3: {
