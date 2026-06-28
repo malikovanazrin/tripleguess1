@@ -145,7 +145,7 @@ function reducer(state: GameState, action: Action): GameState {
         ...state,
         phase: 'round-intro',
         currentRound: nextRound,
-        currentTeam: 1,
+        currentTeam: state.scores.team1 <= state.scores.team2 ? 1 : 2,
         deckForRound: reshuffled,
         activeDeck: [],
         turnGuessedCards: [],
