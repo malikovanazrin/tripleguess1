@@ -11,7 +11,7 @@ export const ROUND_INFO: Record<
       'Use words, sentences, or phrases to describe the card, but never say the actual name!',
     icon: '💬',
   },
-  2: {s
+  2: {
     name: 'One Word',
     rule: 'One word only as your clue',
     description:
