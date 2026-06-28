@@ -27,12 +27,13 @@ export default function HomeScreen() {
           <Text style={styles.title}>Triple</Text>
           <Text style={styles.titleAccent}>Guess</Text>
           <Text style={styles.tagline}>The 3-round team guessing game</Text>
+          <Text style={styles.describeLabel}>Describe cards with</Text>
         </View>
 
         <View style={styles.cardsRow}>
           <View style={[styles.miniCard, { transform: [{ rotate: '-8deg' }], backgroundColor: '#ff6b3520' }]}>
             <Text style={styles.miniCardText}>💬</Text>
-            <Text style={styles.miniCardLabel}>Describe It</Text>
+            <Text style={styles.miniCardLabel}>Any Words</Text>
           </View>
           <View style={[styles.miniCard, { backgroundColor: '#ffd16620', zIndex: 1 }]}>
             <Text style={styles.miniCardText}>1️⃣</Text>
@@ -107,6 +108,14 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
     letterSpacing: 0.5,
   },
+  describeLabel: {
+  fontSize: 14,
+  color: colors.textSecondary,
+  marginTop: 24,
+  marginBottom: 8,
+  letterSpacing: 1,
+  textTransform: 'uppercase',
+},
   cardsRow: {
     flexDirection: 'row',
     justifyContent: 'center',
