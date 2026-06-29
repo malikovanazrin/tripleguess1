@@ -52,15 +52,6 @@ export default function SetupScreen() {
           <Text style={styles.infoText}>
             All cards are reshuffled and reused in each of the 3 rounds.
           </Text>
-          {isValid && (
-            <Text style={styles.infoText}>
-              A full game with {parsed} cards takes approximately{' '}
-              <Text style={styles.infoHighlight}>
-                {Math.round((parsed * 3 * 15) / 60)}–{Math.round((parsed * 3 * 30) / 60)} min
-              </Text>
-              .
-            </Text>
-          )}
         </View>
 
         <TouchableOpacity
