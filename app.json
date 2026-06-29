@@ -15,7 +15,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
-        "backgroundColor": "#0f0f1a"
+        "backgroundColor": "#1a1a2e"
       },
       "package": "com.tripleguess.app"
     },
