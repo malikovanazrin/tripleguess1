@@ -39,7 +39,7 @@ export default function TurnStartScreen() {
           >
             <Text style={styles.teamEmoji}>{currentTeam === 1 ? '🔴' : '🟢'}</Text>
           </LinearGradient>
-          <Text style={styles.label}>It's time for</Text>
+          <Text style={styles.label}>Pass the phone to the next player from</Text>
           <Text style={[styles.teamName, { color: teamColor }]}>Team {currentTeam}</Text>
           <View style={styles.scoreRow}>
             <Text style={styles.scoreLabel}>Current score:</Text>
