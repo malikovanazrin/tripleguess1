@@ -85,6 +85,9 @@ export default function RoundEndScreen() {
           <Text style={styles.nextRoundSub}>
             All {state.originalCards.length} cards are reshuffled and back in play
           </Text>
+          <Text style={styles.nextRoundSub}>
+            The team with the lowest score starts Round {nextRound}
+          </Text>
         </View>
 
         <TouchableOpacity style={styles.nextBtn} onPress={handleNextRound} activeOpacity={0.85}>
