@@ -9,7 +9,7 @@ export default function RootLayout() {
 
   return (
     <GameProvider>
-      <Stack screenOptions={{ headerShown: false, animation: 'none' }}>
+      <Stack screenOptions={{ headerShown: false, animation: 'none', contentStyle: { backgroundColor: '#0f0f1a' } }}>
         <Stack.Screen name="index" />
         <Stack.Screen name="setup" />
         <Stack.Screen name="round-intro" />
