@@ -13,7 +13,7 @@ import { useGame } from '@/context/GameContext';
 import { ROUND_INFO, TURN_DURATION } from '@/constants/game';
 import { colors, spacing, radius } from '@/constants/theme';
 
-const { height } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export default function ActiveTurnScreen() {
   const router = useRouter();
@@ -22,35 +22,31 @@ export default function ActiveTurnScreen() {
   const info = ROUND_INFO[currentRound];
 
   const [timeLeft, setTimeLeft] = useState(TURN_DURATION);
+  const [paused, setPaused] = useState(false);
   const [showPauseModal, setShowPauseModal] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const pausedRef = useRef(false);
-  const turnEndedRef = useRef(false);
 
   const teamColor = currentTeam === 1 ? colors.team1 : colors.team2;
-  const currentCard = activeDeck[0] ?? '';
+  const currentCard = activeDeck[0] ?? null;
   const cardsLeft = deckForRound.length;
 
-  const endTurn = useCallback(() => {
-    if (turnEndedRef.current) return;
-    turnEndedRef.current = true;
-    if (timerRef.current) clearInterval(timerRef.current);
-    dispatch({ type: 'TURN_ENDED' });
-  }, [dispatch]);
-
-  useEffect(() => {
+  const startTimer = useCallback(() => {
     timerRef.current = setInterval(() => {
       if (pausedRef.current) return;
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(timerRef.current!);
-          // Use setTimeout to move dispatch outside of setState
-          setTimeout(() => endTurn(), 0);
+          dispatch({ type: 'TURN_ENDED' });
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
+  }, [dispatch]);
+
+  useEffect(() => {
+    startTimer();
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
@@ -58,11 +54,13 @@ export default function ActiveTurnScreen() {
 
   const handlePause = () => {
     pausedRef.current = true;
+    setPaused(true);
     setShowPauseModal(true);
   };
 
   const handleResume = () => {
     pausedRef.current = false;
+    setPaused(false);
     setShowPauseModal(false);
   };
 
@@ -113,7 +111,7 @@ export default function ActiveTurnScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Timer Bar — driven by timeLeft, pauses correctly */}
+      {/* Timer Bar */}
       <View style={styles.timerBarBg}>
         <View
           style={[
@@ -142,22 +140,33 @@ export default function ActiveTurnScreen() {
             style={styles.cardInner}
           >
             <Text style={styles.cardName} numberOfLines={3} adjustsFontSizeToFit>
-              {currentCard}
+              {currentCard?.name ?? ''}
             </Text>
+            {state.showDescriptions && currentCard?.description ? (
+              <Text style={styles.cardDescription}>{currentCard.description}</Text>
+            ) : null}
           </LinearGradient>
         </View>
       </View>
 
       {/* Action Buttons */}
       <View style={styles.actionsArea}>
-        <TouchableOpacity style={styles.skipBtn} onPress={handleSkip} activeOpacity={0.8}>
+        <TouchableOpacity
+          style={styles.skipBtn}
+          onPress={handleSkip}
+          activeOpacity={0.8}
+        >
           <View style={styles.skipBtnInner}>
             <Text style={styles.skipIcon}>⏭</Text>
             <Text style={styles.skipText}>Skip</Text>
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.gotItBtn} onPress={handleGotIt} activeOpacity={0.8}>
+        <TouchableOpacity
+          style={styles.gotItBtn}
+          onPress={handleGotIt}
+          activeOpacity={0.8}
+        >
           <LinearGradient
             colors={[colors.success, '#04a87e']}
             style={styles.gotItGradient}
@@ -185,8 +194,8 @@ export default function ActiveTurnScreen() {
         </View>
       </View>
 
-      {/* Pause Modal — no animation */}
-      <Modal visible={showPauseModal} transparent animationType="none">
+      {/* Pause Modal */}
+      <Modal visible={showPauseModal} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
             <Text style={styles.modalTitle}>Game Paused</Text>
@@ -225,7 +234,11 @@ const styles = StyleSheet.create({
   headerTeam: { color: colors.text, fontSize: 14, fontWeight: '700' },
   headerCenter: { flex: 2, alignItems: 'center' },
   headerRound: { color: colors.textSecondary, fontSize: 12, fontWeight: '600', textAlign: 'center' },
-  pauseBtn: { flex: 1, alignItems: 'flex-end', padding: spacing.xs },
+  pauseBtn: {
+    flex: 1,
+    alignItems: 'flex-end',
+    padding: spacing.xs,
+  },
   pauseIcon: { fontSize: 22 },
   timerBarBg: {
     height: 6,
@@ -234,7 +247,10 @@ const styles = StyleSheet.create({
     borderRadius: radius.full,
     overflow: 'hidden',
   },
-  timerBarFill: { height: '100%', borderRadius: radius.full },
+  timerBarFill: {
+    height: '100%',
+    borderRadius: radius.full,
+  },
   timerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -242,7 +258,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.sm,
   },
-  timerText: { fontSize: 28, fontWeight: '900', color: colors.text },
+  timerText: {
+    fontSize: 28,
+    fontWeight: '900',
+    color: colors.text,
+  },
   timerTextUrgent: { color: colors.error },
   cardsLeft: { fontSize: 14, color: colors.textSecondary, fontWeight: '600' },
   cardArea: {
@@ -267,6 +287,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: spacing.xl,
   },
+  cardDescription: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    marginTop: 8,
+    lineHeight: 20,
+    paddingHorizontal: 8,
+  },
   cardName: {
     fontSize: 42,
     fontWeight: '900',
@@ -289,7 +317,11 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     overflow: 'hidden',
   },
-  skipBtnInner: { paddingVertical: spacing.lg, alignItems: 'center', gap: spacing.xs },
+  skipBtnInner: {
+    paddingVertical: spacing.lg,
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
   skipIcon: { fontSize: 28 },
   skipText: { fontSize: 16, fontWeight: '700', color: colors.textSecondary },
   gotItBtn: {
@@ -302,7 +334,11 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 6,
   },
-  gotItGradient: { paddingVertical: spacing.lg, alignItems: 'center', gap: spacing.xs },
+  gotItGradient: {
+    paddingVertical: spacing.lg,
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
   gotItIcon: { fontSize: 28 },
   gotItText: { fontSize: 18, fontWeight: '800', color: '#fff' },
   scoreBar: {
@@ -352,8 +388,14 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     marginTop: spacing.sm,
   },
-  modalBtnGradient: { paddingVertical: spacing.md + 2, alignItems: 'center' },
+  modalBtnGradient: {
+    paddingVertical: spacing.md + 2,
+    alignItems: 'center',
+  },
   modalBtnText: { fontSize: 17, fontWeight: '800', color: '#fff' },
-  modalLeaveBtn: { paddingVertical: spacing.md, paddingHorizontal: spacing.xl },
+  modalLeaveBtn: {
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xl,
+  },
   modalLeaveText: { fontSize: 15, color: colors.error, fontWeight: '600' },
 });
