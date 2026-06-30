@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   describeLabel: {
   fontSize: 14,
   color: colors.textSecondary,
-  marginTop: 24,
+  marginTop: 8,
   marginBottom: 8,
   letterSpacing: 1,
   textTransform: 'uppercase',
