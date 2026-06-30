@@ -27,8 +27,9 @@ export default function HomeScreen() {
           <Text style={styles.title}>Triple</Text>
           <Text style={styles.titleAccent}>Guess</Text>
           <Text style={styles.tagline}>The 3-round team guessing game</Text>
-          <Text style={styles.describeLabel}>Describe cards with</Text>
         </View>
+
+        <Text style={styles.describeLabel}>Describe cards with</Text>
 
         <View style={styles.cardsRow}>
           <View style={[styles.miniCard, { transform: [{ rotate: '-8deg' }], backgroundColor: '#ff6b3520' }]}>
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
   describeLabel: {
   fontSize: 14,
   color: colors.textSecondary,
-  marginTop: 8,
+  marginTop: 0,
   marginBottom: 8,
   letterSpacing: 1,
   textTransform: 'uppercase',
