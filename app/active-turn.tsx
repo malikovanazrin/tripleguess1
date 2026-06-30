@@ -24,6 +24,7 @@ export default function ActiveTurnScreen() {
   const [timeLeft, setTimeLeft] = useState(TURN_DURATION);
   const [paused, setPaused] = useState(false);
   const [showPauseModal, setShowPauseModal] = useState(false);
+  const [timerDone, setTimerDone] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const pausedRef = useRef(false);
 
@@ -37,13 +38,19 @@ export default function ActiveTurnScreen() {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(timerRef.current!);
-          dispatch({ type: 'TURN_ENDED' });
+          setTimerDone(true);
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
-  }, [dispatch]);
+  }, []);
+
+  useEffect(() => {
+    if (timerDone) {
+      dispatch({ type: 'TURN_ENDED' });
+    }
+  }, [timerDone]);
 
   useEffect(() => {
     startTimer();
@@ -302,6 +309,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 50,
     letterSpacing: -0.5,
+    flexShrink: 1,
   },
   actionsArea: {
     flexDirection: 'row',
