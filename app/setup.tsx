@@ -11,13 +11,14 @@ export default function SetupScreen() {
   const router = useRouter();
   const { dispatch } = useGame();
   const [cardCount, setCardCount] = useState('40');
+  const [showDescriptions, setShowDescriptions] = useState(false);
 
   const parsed = parseInt(cardCount, 10);
   const isValid = !isNaN(parsed) && parsed >= 1 && parsed <= 115;
 
   const handleStart = () => {
     if (!isValid) return;
-    dispatch({ type: 'START_GAME', cardCount: parsed });
+    dispatch({ type: 'START_GAME', cardCount: parsed, showDescriptions });
     router.replace('/round-intro');
   };
 
@@ -52,7 +53,27 @@ export default function SetupScreen() {
           <Text style={styles.infoText}>
             All cards are reshuffled and reused in each of the 3 rounds.
           </Text>
+          {isValid && (
+            <Text style={styles.infoText}>
+              A full game with {parsed} cards takes approximately{' '}
+              <Text style={styles.infoHighlight}>
+                {Math.round((parsed * 3 * 15) / 60)}–{Math.round((parsed * 3 * 30) / 60)} min
+              </Text>
+              .
+            </Text>
+          )}
         </View>
+
+        <TouchableOpacity
+          style={[styles.toggleBtn, showDescriptions && styles.toggleBtnOn]}
+          onPress={() => setShowDescriptions(prev => !prev)}
+          activeOpacity={0.8}
+        >
+          <Text style={[styles.toggleText, showDescriptions && styles.toggleTextOn]}>
+            {showDescriptions ? '✓ Fun descriptions ON' : 'Fun descriptions OFF'}
+          </Text>
+          <Text style={styles.toggleSub}>Doesn't change any rules — just for fun</Text>
+        </TouchableOpacity>
 
         <TouchableOpacity
           style={[styles.startBtn, !isValid && styles.startBtnDisabled]}
@@ -142,6 +163,32 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 16,
     elevation: 8,
+  },
+  toggleBtn: {
+    borderRadius: radius.md,
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    backgroundColor: colors.bgCard,
+    padding: spacing.md,
+    alignItems: 'center',
+    gap: 4,
+  },
+  toggleBtnOn: {
+    borderColor: colors.primary,
+    backgroundColor: '#1c1c40',
+  },
+  toggleText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: colors.textSecondary,
+  },
+  toggleTextOn: {
+    color: colors.primary,
+  },
+  toggleSub: {
+    fontSize: 11,
+    color: colors.textMuted,
+    textAlign: 'center',
   },
   startBtnDisabled: { opacity: 0.5 },
   startGradient: { paddingVertical: spacing.lg + 2, alignItems: 'center' },
