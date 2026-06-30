@@ -79,7 +79,7 @@ export default function RoundIntroScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { flex: 1, backgroundColor: '#0f0f1a' },
   content: {
     flex: 1,
     paddingHorizontal: spacing.xl,
