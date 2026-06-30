@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import { Round } from '@/constants/game';
-import { pickCards, shuffle } from '@/constants/cards';
+import { pickCards, shuffle, Card } from '@/constants/cards';
 
 export interface GameState {
   phase:
@@ -12,18 +12,19 @@ export interface GameState {
     | 'round-end'
     | 'final';
   cardCount: number;
+  showDescriptions: boolean;
   currentRound: Round;
   currentTeam: 1 | 2;
   scores: { team1: number; team2: number };
-  originalCards: string[];
-  deckForRound: string[];
-  activeDeck: string[];
-  turnGuessedCards: string[];
+  originalCards: Card[];
+  deckForRound: Card[];
+  activeDeck: Card[];
+  turnGuessedCards: Card[];
   lastTurnGuessedCount: number;
 }
 
 type Action =
-  | { type: 'START_GAME'; cardCount: number }
+  | { type: 'START_GAME'; cardCount: number; showDescriptions: boolean }
   | { type: 'START_ROUND' }
   | { type: 'START_TURN' }
   | { type: 'CARD_GUESSED' }
@@ -36,6 +37,7 @@ type Action =
 const initialState: GameState = {
   phase: 'setup',
   cardCount: 30,
+  showDescriptions: false,
   currentRound: 1,
   currentTeam: 1,
   scores: { team1: 0, team2: 0 },
@@ -54,6 +56,7 @@ function reducer(state: GameState, action: Action): GameState {
         ...initialState,
         phase: 'round-intro',
         cardCount: action.cardCount,
+        showDescriptions: action.showDescriptions,
         currentRound: 1,
         currentTeam: 1,
         scores: { team1: 0, team2: 0 },
@@ -86,7 +89,7 @@ function reducer(state: GameState, action: Action): GameState {
       const newGuessed = [...state.turnGuessedCards, guessed];
       const teamKey = state.currentTeam === 1 ? 'team1' : 'team2';
       const newScores = { ...state.scores, [teamKey]: state.scores[teamKey] + 1 };
-      const newDeckForRound = state.deckForRound.filter((c) => c !== guessed);
+      const newDeckForRound = state.deckForRound.filter((c) => c.name !== guessed.name);
 
       if (rest.length === 0) {
         return {
@@ -141,11 +144,12 @@ function reducer(state: GameState, action: Action): GameState {
     case 'START_NEXT_ROUND': {
       const nextRound = (state.currentRound + 1) as Round;
       const reshuffled = shuffle([...state.originalCards]);
+      const startingTeam: 1 | 2 = state.scores.team1 <= state.scores.team2 ? 1 : 2;
       return {
         ...state,
         phase: 'round-intro',
         currentRound: nextRound,
-        currentTeam: state.scores.team1 <= state.scores.team2 ? 1 : 2,
+        currentTeam: startingTeam,
         deckForRound: reshuffled,
         activeDeck: [],
         turnGuessedCards: [],
