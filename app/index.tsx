@@ -29,9 +29,9 @@ export default function HomeScreen() {
           <Text style={styles.tagline}>The 3-round team guessing game</Text>
         </View>
 
-        <Text style={styles.describeLabel}>Describe cards with</Text>
-
-        <View style={styles.cardsRow}>
+        <View style={styles.cardsSection}>
+          <Text style={styles.describeLabel}>Describe cards with</Text>
+          <View style={styles.cardsRow}>
           <View style={[styles.miniCard, { transform: [{ rotate: '-8deg' }], backgroundColor: '#ff6b3520' }]}>
             <Text style={styles.miniCardText}>💬</Text>
             <Text style={styles.miniCardLabel}>Any Words</Text>
@@ -44,6 +44,7 @@ export default function HomeScreen() {
             <Text style={styles.miniCardText}>🤸</Text>
             <Text style={styles.miniCardLabel}>Charades</Text>
           </View>
+        </View>
         </View>
 
         <View style={styles.bottomSection}>
@@ -114,10 +115,14 @@ const styles = StyleSheet.create({
   fontSize: 14,
   color: colors.textSecondary,
   marginTop: 0,
-  marginBottom: 8,
+  marginBottom: 0,
   letterSpacing: 1,
   textTransform: 'uppercase',
 },
+  cardsSection: {
+    alignItems: 'center',
+    gap: 8,
+  },
   cardsRow: {
     flexDirection: 'row',
     justifyContent: 'center',
