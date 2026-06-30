@@ -11,10 +11,10 @@ export default function SetupScreen() {
   const router = useRouter();
   const { dispatch } = useGame();
   const [cardCount, setCardCount] = useState('40');
-  const [showDescriptions, setShowDescriptions] = useState(false);
+  const [showDescriptions, setShowDescriptions] = useState(true);
 
   const parsed = parseInt(cardCount, 10);
-  const isValid = !isNaN(parsed) && parsed >= 1 && parsed <= 115;
+  const isValid = !isNaN(parsed) && parsed >= 1 && parsed <= 200;
 
   const handleStart = () => {
     if (!isValid) return;
@@ -45,7 +45,7 @@ export default function SetupScreen() {
           />
           <Text style={styles.hint}>Recommended: 40–50 cards</Text>
           {!isValid && cardCount !== '' && (
-            <Text style={styles.error}>Please enter a number between 1 and 115</Text>
+            <Text style={styles.error}>Please enter a number between 1 and 200</Text>
           )}
         </View>
 
@@ -53,15 +53,6 @@ export default function SetupScreen() {
           <Text style={styles.infoText}>
             All cards are reshuffled and reused in each of the 3 rounds.
           </Text>
-          {isValid && (
-            <Text style={styles.infoText}>
-              A full game with {parsed} cards takes approximately{' '}
-              <Text style={styles.infoHighlight}>
-                {Math.round((parsed * 3 * 15) / 60)}–{Math.round((parsed * 3 * 30) / 60)} min
-              </Text>
-              .
-            </Text>
-          )}
         </View>
 
         <TouchableOpacity
