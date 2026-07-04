@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import { Round } from '@/constants/game';
 import { pickCards, shuffle, Card } from '@/constants/cards';
+import { Language } from '@/constants/translations';
 
 export interface GameState {
   phase:
@@ -11,6 +12,7 @@ export interface GameState {
     | 'turn-summary'
     | 'round-end'
     | 'final';
+  language: Language;
   cardCount: number;
   showDescriptions: boolean;
   currentRound: Round;
@@ -24,6 +26,7 @@ export interface GameState {
 }
 
 type Action =
+  | { type: 'SET_LANGUAGE'; language: Language }
   | { type: 'START_GAME'; cardCount: number; showDescriptions: boolean }
   | { type: 'START_ROUND' }
   | { type: 'START_TURN' }
@@ -36,6 +39,7 @@ type Action =
 
 const initialState: GameState = {
   phase: 'setup',
+  language: 'en',
   cardCount: 30,
   showDescriptions: false,
   currentRound: 1,
@@ -50,10 +54,14 @@ const initialState: GameState = {
 
 function reducer(state: GameState, action: Action): GameState {
   switch (action.type) {
+    case 'SET_LANGUAGE': {
+      return { ...state, language: action.language };
+    }
     case 'START_GAME': {
-      const cards = pickCards(action.cardCount);
+      const cards = pickCards(action.cardCount, state.language);
       return {
         ...initialState,
+        language: state.language,
         phase: 'round-intro',
         cardCount: action.cardCount,
         showDescriptions: action.showDescriptions,
@@ -112,10 +120,7 @@ function reducer(state: GameState, action: Action): GameState {
     }
     case 'CARD_SKIPPED': {
       const [skipped, ...rest] = state.activeDeck;
-      return {
-        ...state,
-        activeDeck: [...rest, skipped],
-      };
+      return { ...state, activeDeck: [...rest, skipped] };
     }
     case 'TURN_ENDED': {
       return {
@@ -126,9 +131,7 @@ function reducer(state: GameState, action: Action): GameState {
     }
     case 'NEXT_TURN_OR_ROUND': {
       if (state.deckForRound.length === 0) {
-        if (state.currentRound === 3) {
-          return { ...state, phase: 'final' };
-        }
+        if (state.currentRound === 3) return { ...state, phase: 'final' };
         return { ...state, phase: 'round-end' };
       }
       const nextTeam: 1 | 2 = state.currentTeam === 1 ? 2 : 1;
@@ -157,7 +160,7 @@ function reducer(state: GameState, action: Action): GameState {
       };
     }
     case 'RESET': {
-      return { ...initialState };
+      return { ...initialState, language: state.language };
     }
     default:
       return state;
