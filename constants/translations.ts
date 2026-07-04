@@ -86,11 +86,11 @@ export const T = {
   },
   az: {
     // Home
-    tagline: '3 turlu komanda tapmacanı oyunu',
+    tagline: '3 turlu komanda tapmaca oyunu',
     describeCardsWith: 'KARTLARI NECƏ İZAH EDİN',
     anyWords: 'İstənilən söz',
     oneWord: 'Bir söz',
-    charades: 'Şarадa',
+    charades: 'Sözsüz',
     newGame: 'Yeni Oyun',
     rulesHint: '2 komanda · 3 tur · hər növbə 60 saniyə',
     // Setup
@@ -116,10 +116,10 @@ export const T = {
     round1Desc: 'Kartı söz, cümlə və ya ifadə ilə izah edin — ancaq adını deməyin!',
     round2Name: 'Bir söz',
     round2Rule: 'Yalnız bir söz deyə bilərsiniz',
-    round2Desc: 'İpucu kimi yalnız bir söz deyə bilərsiniz. Düşünülmüş seçin!',
-    round3Name: 'Şarada',
-    round3Rule: 'Söz yoxdur — canlandırın!',
-    round3Desc: 'Sükut! Söz olmaz. Jest, bədən dili və səs effektlərindən istifadə edin (ağlabatan həddə), amma danışmayın.',
+    round2Desc: 'İpucu kimi yalnız bir söz deyə bilərsiniz. Düşünərək seçin!',
+    round3Name: 'Sözsüz',
+    round3Rule: 'Söz yoxdur — hərəkətərlə izah edin!',
+    round3Desc: 'Sükut! Söz olmaz. Jest, bədən dili və səs effektlərindən (lazım olarsa) istifadə edin, amma danışmayın.',
     // Turn Start
     passPhone: 'Telefonu növbəti oyunçuya ötürün —',
     team: (n: number) => `${n}-ci Komanda`,
@@ -132,7 +132,7 @@ export const T = {
     roundLabel: (r: number, name: string) => `${r}-ci tur · ${name}`,
     // Active Turn
     cardsLeft: (n: number) => `${n} kart qaldı`,
-    skip: 'Keç',
+    skip: 'Pas',
     gotIt: 'Tapdı!',
     gamePaused: 'Oyun Dayandırıldı',
     timeRemaining: (t: string) => `Qalan vaxt: ${t}s`,
