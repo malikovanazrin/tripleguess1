@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Modal, BackHandler } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGame } from '@/context/GameContext';
@@ -43,6 +43,15 @@ export default function ActiveTurnScreen() {
 
   useEffect(() => { if (timerDone) dispatch({ type: 'TURN_ENDED' }); }, [timerDone]);
   useEffect(() => { startTimer(); return () => { if (timerRef.current) clearInterval(timerRef.current); }; }, []);
+
+  // Intercept hardware back button — show pause modal instead of leaving
+  useEffect(() => {
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+      handlePause();
+      return true; // true = we handled it, don't navigate back
+    });
+    return () => sub.remove();
+  }, []);
 
   const handlePause = () => { pausedRef.current = true; setPaused(true); setShowPauseModal(true); };
   const handleResume = () => { pausedRef.current = false; setPaused(false); setShowPauseModal(false); };
