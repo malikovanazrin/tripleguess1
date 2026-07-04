@@ -5,6 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useGame } from '@/context/GameContext';
 import { colors, spacing, radius } from '@/constants/theme';
 import { T } from '@/constants/translations';
+import { useBlockBack } from '@/hooks/useBlockBack';
 
 const { height } = Dimensions.get('window');
 
@@ -12,6 +13,7 @@ export default function RoundEndScreen() {
   const router = useRouter();
   const { state, dispatch } = useGame();
   const t = T[state.language];
+  useBlockBack();
   const { currentRound, scores } = state;
 
   const team1Leading = scores.team1 > scores.team2;
