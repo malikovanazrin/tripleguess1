@@ -4,12 +4,14 @@ import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGame } from '@/context/GameContext';
 import { colors, spacing, radius } from '@/constants/theme';
+import { T } from '@/constants/translations';
 
 const { height } = Dimensions.get('window');
 
 export default function SetupScreen() {
   const router = useRouter();
-  const { dispatch } = useGame();
+  const { state, dispatch } = useGame();
+  const t = T[state.language];
   const [cardCount, setCardCount] = useState('40');
   const [showDescriptions, setShowDescriptions] = useState(true);
 
@@ -27,10 +29,10 @@ export default function SetupScreen() {
       <View style={styles.content}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-            <Text style={styles.backText}>← Back</Text>
+            <Text style={styles.backText}>{t.back}</Text>
           </TouchableOpacity>
-          <Text style={styles.title}>Game Setup</Text>
-          <Text style={styles.subtitle}>How many cards do you want to play with?</Text>
+          <Text style={styles.title}>{t.gameSetup}</Text>
+          <Text style={styles.subtitle}>{t.howManyCards}</Text>
         </View>
 
         <View style={styles.inputSection}>
@@ -43,16 +45,14 @@ export default function SetupScreen() {
             placeholderTextColor={colors.textMuted}
             selectionColor={colors.primary}
           />
-          <Text style={styles.hint}>Recommended: 40–50 cards</Text>
+          <Text style={styles.hint}>{t.recommended}</Text>
           {!isValid && cardCount !== '' && (
-            <Text style={styles.error}>Please enter a number between 1 and 200</Text>
+            <Text style={styles.error}>{t.cardError}</Text>
           )}
         </View>
 
         <View style={styles.infoBox}>
-          <Text style={styles.infoText}>
-            All cards are reshuffled and reused in each of the 3 rounds.
-          </Text>
+          <Text style={styles.infoText}>{t.allCardsreshuffled}</Text>
         </View>
 
         <TouchableOpacity
@@ -61,9 +61,9 @@ export default function SetupScreen() {
           activeOpacity={0.8}
         >
           <Text style={[styles.toggleText, showDescriptions && styles.toggleTextOn]}>
-            {showDescriptions ? '✓ Fun descriptions ON' : 'Fun descriptions OFF'}
+            {showDescriptions ? t.funDescOn : t.funDescOff}
           </Text>
-          <Text style={styles.toggleSub}>Doesn't change any rules — just for fun</Text>
+          <Text style={styles.toggleSub}>{t.funDescSub}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -78,7 +78,7 @@ export default function SetupScreen() {
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
           >
-            <Text style={styles.startText}>Start Game</Text>
+            <Text style={styles.startText}>{t.startGame}</Text>
           </LinearGradient>
         </TouchableOpacity>
       </View>
@@ -89,98 +89,41 @@ export default function SetupScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0f0f1a' },
   content: {
-    flex: 1,
-    paddingHorizontal: spacing.xl,
-    paddingTop: height * 0.07,
-    paddingBottom: height * 0.06,
+    flex: 1, paddingHorizontal: spacing.xl,
+    paddingTop: height * 0.07, paddingBottom: height * 0.06,
     justifyContent: 'space-between',
   },
   header: { alignItems: 'center' },
   backBtn: { alignSelf: 'flex-start', marginBottom: spacing.lg },
   backText: { color: colors.textSecondary, fontSize: 16 },
-  title: {
-    fontSize: 36,
-    fontWeight: '900',
-    color: colors.text,
-    letterSpacing: -1,
-    marginBottom: spacing.sm,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: colors.textSecondary,
-    textAlign: 'center',
-  },
-  inputSection: {
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
+  title: { fontSize: 36, fontWeight: '900', color: colors.text, letterSpacing: -1, marginBottom: spacing.sm },
+  subtitle: { fontSize: 16, color: colors.textSecondary, textAlign: 'center' },
+  inputSection: { alignItems: 'center', gap: spacing.sm },
   input: {
-    width: 140,
-    height: 100,
-    borderRadius: radius.lg,
-    borderWidth: 2,
-    borderColor: colors.primary,
-    backgroundColor: '#1c1c30',
-    color: colors.text,
-    fontSize: 52,
-    fontWeight: '900',
-    textAlign: 'center',
+    width: 140, height: 100, borderRadius: radius.lg, borderWidth: 2,
+    borderColor: colors.primary, backgroundColor: '#1c1c30',
+    color: colors.text, fontSize: 52, fontWeight: '900', textAlign: 'center',
   },
-  hint: {
-    fontSize: 14,
-    color: colors.textMuted,
-    marginTop: spacing.xs,
-  },
-  error: {
-    fontSize: 13,
-    color: '#ff6b6b',
-    marginTop: spacing.xs,
-  },
+  hint: { fontSize: 14, color: colors.textMuted, marginTop: spacing.xs },
+  error: { fontSize: 13, color: '#ff6b6b', marginTop: spacing.xs },
   infoBox: {
-    backgroundColor: colors.bgCard,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    gap: spacing.xs,
-    borderWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: colors.bgCard, borderRadius: radius.md,
+    padding: spacing.md, borderWidth: 1, borderColor: colors.border,
   },
   infoText: { fontSize: 13, color: colors.textSecondary, lineHeight: 20 },
-  infoHighlight: { color: colors.accent, fontWeight: '700' },
   startBtn: {
-    borderRadius: radius.full,
-    overflow: 'hidden',
-    shadowColor: colors.secondary,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.4,
-    shadowRadius: 16,
-    elevation: 8,
+    borderRadius: radius.full, overflow: 'hidden',
+    shadowColor: colors.secondary, shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4, shadowRadius: 16, elevation: 8,
   },
   toggleBtn: {
-    borderRadius: radius.md,
-    borderWidth: 1.5,
-    borderColor: colors.border,
-    backgroundColor: colors.bgCard,
-    padding: spacing.md,
-    alignItems: 'center',
-    gap: 4,
+    borderRadius: radius.md, borderWidth: 1.5, borderColor: colors.border,
+    backgroundColor: colors.bgCard, padding: spacing.md, alignItems: 'center', gap: 4,
   },
-  toggleBtnOn: {
-    borderColor: colors.primary,
-    backgroundColor: '#1c1c40',
-  },
-  toggleText: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: colors.textSecondary,
-  },
-  toggleTextOn: {
-    color: colors.primary,
-  },
-  toggleSub: {
-    fontSize: 11,
-    color: colors.textMuted,
-    textAlign: 'center',
-  },
+  toggleBtnOn: { borderColor: colors.primary, backgroundColor: '#1c1c40' },
+  toggleText: { fontSize: 15, fontWeight: '600', color: colors.textSecondary },
+  toggleTextOn: { color: colors.primary },
+  toggleSub: { fontSize: 11, color: colors.textMuted, textAlign: 'center' },
   startBtnDisabled: { opacity: 0.5 },
   startGradient: { paddingVertical: spacing.lg + 2, alignItems: 'center' },
   startText: { fontSize: 20, fontWeight: '800', color: colors.text, letterSpacing: 0.5 },
