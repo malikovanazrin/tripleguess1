@@ -96,9 +96,12 @@ export default function ActiveTurnScreen() {
       <View style={styles.cardArea}>
         <View style={[styles.card, { borderColor: teamColor + '60' }]}>
           <LinearGradient colors={['#1c1c35', '#252550']} style={styles.cardInner}>
-            <Text style={styles.cardName} numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.5}>
-              {currentCard?.name ?? ''}
+            <Text style={styles.cardName} numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.4}>
+              {(currentCard?.name ?? '').split('/')[0].trim()}
             </Text>
+            {currentCard?.name?.includes('/') ? (
+              <Text style={styles.cardEnglish}>{currentCard.name.split('/')[1].trim()}</Text>
+            ) : null}
             {state.showDescriptions && currentCard?.description ? (
               <Text style={styles.cardDescription}>{currentCard.description}</Text>
             ) : null}
@@ -175,6 +178,7 @@ const styles = StyleSheet.create({
   card: { borderRadius: radius.xl, borderWidth: 2, overflow: 'hidden', shadowColor: '#000', shadowOffset: { width: 0, height: 12 }, shadowOpacity: 0.5, shadowRadius: 20, elevation: 12 },
   cardInner: { minHeight: height * 0.28, justifyContent: 'center', alignItems: 'center', padding: spacing.xl },
   cardName: { fontSize: 42, fontWeight: '900', color: colors.text, textAlign: 'center', lineHeight: 50, letterSpacing: -0.5, flexShrink: 1 },
+  cardEnglish: { fontSize: 13, color: colors.textMuted, textAlign: 'center', marginTop: 4, fontStyle: 'italic' },
   cardDescription: { fontSize: 14, color: colors.textSecondary, textAlign: 'center', marginTop: 8, lineHeight: 20, paddingHorizontal: 8 },
   actionsArea: { flexDirection: 'row', paddingHorizontal: spacing.xl, gap: spacing.md, paddingBottom: spacing.lg },
   skipBtn: { flex: 1, borderRadius: radius.lg, backgroundColor: colors.bgCard, borderWidth: 2, borderColor: colors.border, overflow: 'hidden' },
