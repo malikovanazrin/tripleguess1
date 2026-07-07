@@ -17,6 +17,8 @@ export default function RootLayout() {
         <Stack screenOptions={{ headerShown: false, animation: 'none', contentStyle: { backgroundColor: BG } }}>
           <Stack.Screen name="index" options={screenOpts} />
           <Stack.Screen name="setup" options={screenOpts} />
+          <Stack.Screen name="draft-intro" options={screenOpts} />
+          <Stack.Screen name="draft" options={screenOpts} />
           <Stack.Screen name="round-intro" options={screenOpts} />
           <Stack.Screen name="turn-start" options={screenOpts} />
           <Stack.Screen name="active-turn" options={screenOpts} />
