@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Modal, BackHandler } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Modal, BackHandler, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGame } from '@/context/GameContext';
@@ -44,13 +44,23 @@ export default function ActiveTurnScreen() {
   useEffect(() => { if (timerDone) dispatch({ type: 'TURN_ENDED' }); }, [timerDone]);
   useEffect(() => { startTimer(); return () => { if (timerRef.current) clearInterval(timerRef.current); }; }, []);
 
-  // Intercept hardware back button — show pause modal instead of leaving
+  // Intercept back button — show pause modal instead of leaving (works on both web and Android)
   useEffect(() => {
-    const sub = BackHandler.addEventListener('hardwareBackPress', () => {
-      handlePause();
-      return true; // true = we handled it, don't navigate back
-    });
-    return () => sub.remove();
+    if (Platform.OS === 'web') {
+      window.history.pushState(null, '', window.location.href);
+      const handlePopState = () => {
+        window.history.pushState(null, '', window.location.href);
+        handlePause();
+      };
+      window.addEventListener('popstate', handlePopState);
+      return () => window.removeEventListener('popstate', handlePopState);
+    } else {
+      const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+        handlePause();
+        return true;
+      });
+      return () => sub.remove();
+    }
   }, []);
 
   const handlePause = () => { pausedRef.current = true; setPaused(true); setShowPauseModal(true); };
