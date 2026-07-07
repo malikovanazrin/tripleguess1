@@ -18,7 +18,8 @@ export default function TurnSummaryScreen() {
   const router = useRouter();
   const { state, dispatch } = useGame();
   const t = T[state.language];
-  useBlockBack();
+  const handleLeave = () => { dispatch({ type: 'RESET' }); router.replace('/'); };
+  useBlockBack(handleLeave);
   const { currentTeam, currentRound, scores, lastTurnGuessedCount, deckForRound } = state;
 
   const teamColor = currentTeam === 1 ? colors.team1 : colors.team2;
