@@ -26,7 +26,8 @@ export default function TurnStartScreen() {
   const router = useRouter();
   const { state, dispatch } = useGame();
   const t = T[state.language];
-  useBlockBack();
+  const handleLeave = () => { dispatch({ type: 'RESET' }); router.replace('/'); };
+  useBlockBack(handleLeave);
   const { currentTeam, currentRound, scores, deckForRound } = state;
   const info = ROUND_INFO[state.language][currentRound];
 
