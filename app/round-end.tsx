@@ -13,7 +13,8 @@ export default function RoundEndScreen() {
   const router = useRouter();
   const { state, dispatch } = useGame();
   const t = T[state.language];
-  useBlockBack();
+  const handleLeave = () => { dispatch({ type: 'RESET' }); router.replace('/'); };
+  useBlockBack(handleLeave);
   const { currentRound, scores } = state;
 
   const team1Leading = scores.team1 > scores.team2;
