@@ -1,20 +1,27 @@
 import { useEffect } from 'react';
-import { BackHandler, Platform } from 'react-native';
+import { BackHandler, Platform, Alert } from 'react-native';
 
-export function useBlockBack() {
+export function useBlockBack(onLeave?: () => void) {
   useEffect(() => {
     if (Platform.OS === 'web') {
-      // Push a dummy state so there's something to go "back" to
-      window.history.pushState(null, '', window.location.href);
-      const handlePopState = () => {
-        // Push again to prevent going back
-        window.history.pushState(null, '', window.location.href);
-      };
-      window.addEventListener('popstate', handlePopState);
-      return () => window.removeEventListener('popstate', handlePopState);
+      // Web: do nothing — can't reliably block browser back without breaking router
+      // The active-turn screen handles this separately with pause modal
+      return;
     } else {
-      const sub = BackHandler.addEventListener('hardwareBackPress', () => true);
+      const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+        if (onLeave) {
+          Alert.alert(
+            'Leave Game?',
+            'Are you sure you want to leave? Your progress will be lost.',
+            [
+              { text: 'Stay', style: 'cancel' },
+              { text: 'Leave', style: 'destructive', onPress: onLeave },
+            ]
+          );
+        }
+        return true; // always block, alert handles navigation
+      });
       return () => sub.remove();
     }
-  }, []);
+  }, [onLeave]);
 }
