@@ -11,7 +11,7 @@ const TURN_DURATION = 60;
 
 const ROUND_RULES = {
   en: { 1: '💬 Say anything except the card name', 2: '1️⃣ One word only', 3: '🤸 No words — act it out!' },
-  az: { 1: '💬 Kartın adından başqa istənilən şey', 2: '1️⃣ Yalnız bir söz', 3: '🤸 Söz yoxdur — canlandırın!' },
+  az: { 1: '💬 Kartın adından başqa istənilən sözlərlə', 2: '1️⃣ Yalnız bir söz', 3: '🤸 Söz yoxdur — hərəkət edin!' },
 };
 
 export default function ActiveTurnScreen() {
