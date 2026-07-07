@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Modal, BackHandler, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Modal, BackHandler, Platform, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGame } from '@/context/GameContext';
@@ -11,7 +11,7 @@ const TURN_DURATION = 60;
 
 const ROUND_RULES = {
   en: { 1: '💬 Say anything except the card name', 2: '1️⃣ One word only', 3: '🤸 No words — act it out!' },
-  az: { 1: '💬 Kartın adından başqa istənilən sözlərlə', 2: '1️⃣ Yalnız bir söz', 3: '🤸 Söz yoxdur — hərəkət edin!' },
+  az: { 1: '💬 Kartın adından başqa istənilən şey', 2: '1️⃣ Yalnız bir söz', 3: '🤸 Söz yoxdur — canlandırın!' },
 };
 
 export default function ActiveTurnScreen() {
@@ -21,7 +21,6 @@ export default function ActiveTurnScreen() {
   const { currentTeam, currentRound, activeDeck, scores, deckForRound } = state;
 
   const [timeLeft, setTimeLeft] = useState(TURN_DURATION);
-  const [paused, setPaused] = useState(false);
   const [showPauseModal, setShowPauseModal] = useState(false);
   const [timerDone, setTimerDone] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -30,6 +29,38 @@ export default function ActiveTurnScreen() {
   const teamColor = currentTeam === 1 ? colors.team1 : colors.team2;
   const currentCard = activeDeck[0] ?? null;
   const cardsLeft = deckForRound.length;
+
+  const handlePause = useCallback(() => {
+    pausedRef.current = true;
+    setShowPauseModal(true);
+  }, []);
+
+  const handleResume = () => {
+    pausedRef.current = false;
+    setShowPauseModal(false);
+  };
+
+  const handleLeaveGame = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    setShowPauseModal(false);
+    dispatch({ type: 'RESET' });
+    router.replace('/');
+  };
+
+  const confirmLeave = () => {
+    if (Platform.OS === 'web') {
+      handleLeaveGame();
+    } else {
+      Alert.alert(
+        t.leaveGame,
+        state.language === 'az' ? 'Əminsiniz? Bütün irəliləyiş silinəcək.' : 'Are you sure? All progress will be lost.',
+        [
+          { text: state.language === 'az' ? 'Qal' : 'Stay', style: 'cancel' },
+          { text: state.language === 'az' ? 'Çıx' : 'Leave', style: 'destructive', onPress: handleLeaveGame },
+        ]
+      );
+    }
+  };
 
   const startTimer = useCallback(() => {
     timerRef.current = setInterval(() => {
@@ -44,28 +75,16 @@ export default function ActiveTurnScreen() {
   useEffect(() => { if (timerDone) dispatch({ type: 'TURN_ENDED' }); }, [timerDone]);
   useEffect(() => { startTimer(); return () => { if (timerRef.current) clearInterval(timerRef.current); }; }, []);
 
-  // Intercept back button — show pause modal instead of leaving (works on both web and Android)
+  // Back button handler
   useEffect(() => {
-    if (Platform.OS === 'web') {
-      window.history.pushState(null, '', window.location.href);
-      const handlePopState = () => {
-        window.history.pushState(null, '', window.location.href);
-        handlePause();
-      };
-      window.addEventListener('popstate', handlePopState);
-      return () => window.removeEventListener('popstate', handlePopState);
-    } else {
-      const sub = BackHandler.addEventListener('hardwareBackPress', () => {
-        handlePause();
-        return true;
-      });
-      return () => sub.remove();
-    }
-  }, []);
+    if (Platform.OS === 'web') return; // web handled by pause modal only
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+      handlePause();
+      return true;
+    });
+    return () => sub.remove();
+  }, [handlePause]);
 
-  const handlePause = () => { pausedRef.current = true; setPaused(true); setShowPauseModal(true); };
-  const handleResume = () => { pausedRef.current = false; setPaused(false); setShowPauseModal(false); };
-  const handleLeaveGame = () => { if (timerRef.current) clearInterval(timerRef.current); dispatch({ type: 'RESET' }); router.replace('/'); };
   const handleGotIt = () => { if (activeDeck.length === 0) return; dispatch({ type: 'CARD_GUESSED' }); };
   const handleSkip = () => { if (activeDeck.length === 0) return; dispatch({ type: 'CARD_SKIPPED' }); };
 
@@ -127,7 +146,7 @@ export default function ActiveTurnScreen() {
           </View>
         </TouchableOpacity>
         <TouchableOpacity style={styles.gotItBtn} onPress={handleGotIt} activeOpacity={0.8}>
-          <LinearGradient colors={[colors.success, '#04a87e']} style={styles.gotItGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+          <LinearGradient colors={[colors.success, '#04a87e']} style={styles.gotItGradient}>
             <Text style={styles.gotItIcon}>✅</Text>
             <Text style={styles.gotItText}>{t.gotIt}</Text>
           </LinearGradient>
@@ -158,7 +177,7 @@ export default function ActiveTurnScreen() {
                 <Text style={styles.modalBtnText}>{t.resume}</Text>
               </LinearGradient>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.modalLeaveBtn} onPress={handleLeaveGame} activeOpacity={0.85}>
+            <TouchableOpacity style={styles.modalLeaveBtn} onPress={confirmLeave} activeOpacity={0.85}>
               <Text style={styles.modalLeaveText}>{t.leaveGame}</Text>
             </TouchableOpacity>
           </View>
