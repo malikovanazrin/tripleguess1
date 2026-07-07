@@ -26,7 +26,8 @@ export default function RoundIntroScreen() {
   const router = useRouter();
   const { state, dispatch } = useGame();
   const t = T[state.language];
-  useBlockBack();
+  const handleLeave = () => { dispatch({ type: 'RESET' }); router.replace('/'); };
+  useBlockBack(handleLeave);
   const round = state.currentRound;
   const info = ROUND_INFO[state.language][round];
 
