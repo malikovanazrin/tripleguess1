@@ -19,7 +19,7 @@ export default function SetupScreen() {
   const [showDescriptions, setShowDescriptions] = useState(true);
   const [draftingEnabled, setDraftingEnabled] = useState(false);
   const [numberOfPlayers, setNumberOfPlayers] = useState('4');
-  const [cardsPerPlayer, setCardsPerPlayer] = useState('10');
+  const [cardsPerPlayer, setCardsPerPlayer] = useState(String(Math.ceil(40 / 4)));
 
   const parsedCardCount = parseInt(cardCount, 10);
   const parsedPlayers = parseInt(numberOfPlayers, 10);
@@ -170,12 +170,12 @@ export default function SetupScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0f0f1a' },
-  scroll: { paddingHorizontal: spacing.xl, paddingTop: height * 0.07, gap: spacing.lg },
+  scroll: { flexGrow: 1, paddingHorizontal: spacing.xl, paddingTop: height * 0.07, paddingBottom: spacing.xl, gap: spacing.lg },
   backBtn: { alignSelf: 'flex-start' },
   backText: { color: colors.textSecondary, fontSize: 16 },
   title: { fontSize: 36, fontWeight: '900', color: colors.text, letterSpacing: -1 },
   section: { gap: spacing.md },
-  inputLabel: { fontSize: 14, color: colors.textSecondary, fontWeight: '600' },
+  inputLabel: { fontSize: 13, color: colors.textSecondary, fontWeight: '600', numberOfLines: 1 },
   inputRow: { flexDirection: 'row', gap: spacing.md },
   inputBlock: { flex: 1, gap: spacing.sm },
   inputSmall: {
