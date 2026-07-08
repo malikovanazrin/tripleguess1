@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Modal, BackHandler, Platform, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Modal, Platform, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGame } from '@/context/GameContext';
 import { colors, spacing, radius } from '@/constants/theme';
 import { T } from '@/constants/translations';
+import { useBlockBack } from '@/hooks/useBlockBack';
 
 const { width, height } = Dimensions.get('window');
 const TURN_DURATION = 60;
@@ -75,15 +76,8 @@ export default function ActiveTurnScreen() {
   useEffect(() => { if (timerDone) dispatch({ type: 'TURN_ENDED' }); }, [timerDone]);
   useEffect(() => { startTimer(); return () => { if (timerRef.current) clearInterval(timerRef.current); }; }, []);
 
-  // Back button handler
-  useEffect(() => {
-    if (Platform.OS === 'web') return; // web handled by pause modal only
-    const sub = BackHandler.addEventListener('hardwareBackPress', () => {
-      handlePause();
-      return true;
-    });
-    return () => sub.remove();
-  }, [handlePause]);
+  // Back button handled by useBlockBack hook below (shows pause modal on web)
+  useBlockBack(handleLeaveGame);
 
   const handleGotIt = () => { if (activeDeck.length === 0) return; dispatch({ type: 'CARD_GUESSED' }); };
   const handleSkip = () => { if (activeDeck.length === 0) return; dispatch({ type: 'CARD_SKIPPED' }); };
